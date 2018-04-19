@@ -13,4 +13,6 @@ RUN addgroup -S java \
     && \
     chown -R java:java /home/java /etc/ssl/certs /app
 
+WORKDIR /app
+
 USER java
