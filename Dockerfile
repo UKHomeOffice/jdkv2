@@ -9,6 +9,8 @@ RUN addgroup -S java \
     && \
     adduser -D -G java -u 1000 -s /bin/bash -h /home/java java \
     && \
-    chown -R java:java /home/java /etc/ssl/certs
+    mkdir /app \
+    && \
+    chown -R java:java /home/java /etc/ssl/certs /app
 
-USER 1000
+USER java
