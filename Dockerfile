@@ -4,6 +4,7 @@ RUN apk add --no-cache -U java-cacerts \
     && \
     ln -sf /etc/ssl/certs/java/cacerts $JAVA_HOME/jre/lib/security/cacerts
 
+ADD ./run.sh /bin/run.sh
 
 RUN addgroup -S java \
     && \
@@ -11,8 +12,12 @@ RUN addgroup -S java \
     && \
     mkdir /app \
     && \
-    chown -R java:java /home/java /etc/ssl/certs /app
+    chown -R java:java /home/java /etc/ssl/certs /app \
+    && \
+    chmod +x /bin/run.sh
 
 WORKDIR /app
 
 USER java
+
+ENTRYPOINT /bin/run.sh
