@@ -1,6 +1,8 @@
 FROM openjdk:alpine
 
-RUN apk add --no-cache -U java-cacerts \
+RUN apk --no-cache -U upgrade \
+    && \
+    apk add --no-cache -U java-cacerts \
     && \
     ln -sf /etc/ssl/certs/java/cacerts $JAVA_HOME/jre/lib/security/cacerts
 
