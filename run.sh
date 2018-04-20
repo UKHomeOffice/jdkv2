@@ -7,12 +7,12 @@ cd /etc/ssl/certs
 
 if [ -d /certs ]
 then
-  find /certs -type f -exec cp -L {} /etc/ssl/certs/
+  find /certs -type f -exec cp -L {} /etc/ssl/certs/ \;
 fi
 
 if [ -d /ca ]
 then
-  find /ca -type f -exec cp -L {} /etc/ssl/certs/
+  find /ca -type f -exec cp -L {} /etc/ssl/certs/ \;
 fi
 
 if [ ! -d /etc/ssl/certs/java ]
