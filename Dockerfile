@@ -1,10 +1,6 @@
 FROM openjdk:alpine
 
-RUN apk --no-cache -U upgrade \
-    && \
-    apk add --no-cache -U java-cacerts bash \
-    && \
-    ln -sf /etc/ssl/certs/java/cacerts $JAVA_HOME/jre/lib/security/cacerts
+RUN apk --no-cache -U upgrade
 
 ADD ./run.sh /bin/run.sh
 
@@ -14,12 +10,12 @@ RUN addgroup -S java \
     && \
     mkdir /app \
     && \
-    chown -R java:java /home/java /etc/ssl/certs /app \
+    chown -R java:java /home/java /app \
     && \
     chmod +x /bin/run.sh
 
 WORKDIR /app
 
-USER java
+USER 1000
 
 ENTRYPOINT /bin/run.sh
