@@ -19,3 +19,4 @@ WORKDIR /app
 USER 1000
 
 ENTRYPOINT /bin/run.sh
+
