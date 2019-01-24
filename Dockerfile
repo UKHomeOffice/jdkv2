@@ -1,6 +1,7 @@
 FROM openjdk:alpine
 
 RUN apk --no-cache -U upgrade
+UN apk add bash curl ca-certificates openssl --update &&
 
 ADD ./run.sh /bin/run.sh
 
