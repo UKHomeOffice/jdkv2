@@ -1,4 +1,4 @@
-FROM openjdk:alpine
+FROM openjdk:8-jdk-alpine
 
 RUN apk --no-cache -U upgrade
 RUN apk add bash curl ca-certificates openssl --update
