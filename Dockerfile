@@ -1,23 +1,15 @@
-FROM openjdk:8-jdk-alpine
+FROM amazoncorretto:11
 
-RUN apk --no-cache -U upgrade
-RUN apk add bash curl ca-certificates openssl --update
+RUN yum -y update && \
+    yum -y install openssl shadow-utils && \
+    groupadd -g 1000 java && \
+    adduser -g 1000 -u 1000 -s /bin/bash -d /home/java java && \
+    mkdir /app  && \
+    chown -R java:java /home/java /app && \
+    yum -y clean all
 
-ADD ./run.sh /bin/run.sh
-
-RUN addgroup -S java \
-    && \
-    adduser -D -G java -u 1000 -s /bin/bash -h /home/java java \
-    && \
-    mkdir /app \
-    && \
-    chown -R java:java /home/java /app \
-    && \
-    chmod +x /bin/run.sh
-
-WORKDIR /app
-
+WORKDIR /tmp
 USER 1000
 
-ENTRYPOINT /bin/run.sh
+ENTRYPOINT /bin/bash
 
