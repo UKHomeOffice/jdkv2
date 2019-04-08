@@ -8,7 +8,8 @@ RUN yum -y update && \
     chown -R java:java /home/java /app && \
     yum -y clean all
 
-WORKDIR /tmp
+ENV HOME /home/java
+
 USER 1000
 
 ENTRYPOINT /bin/bash
