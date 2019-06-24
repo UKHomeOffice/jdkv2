@@ -4,8 +4,8 @@ RUN yum -y update && \
     yum -y install openssl shadow-utils && \
     groupadd -g 1000 java && \
     adduser -g 1000 -u 1000 -s /bin/bash -d /home/java java && \
-    mkdir /app  && \
-    chown -R java:java /home/java /app && \
+    mkdir /app /etc/keystore  && \
+    chown -R java:java /home/java /app /etc/keystore && \
     yum -y clean all
 
 ADD run.sh /usr/bin/run.sh
