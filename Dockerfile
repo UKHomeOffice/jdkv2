@@ -8,5 +8,8 @@ RUN yum -y update && \
     chown -R java:java /home/java /app && \
     yum -y clean all
 
-ENTRYPOINT /bin/bash
+ADD run.sh /usr/bin/run.sh
+RUN chmod +x /usr/bin/run.sh
+
+ENTRYPOINT /usr/bin/run.sh
 
