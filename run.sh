@@ -22,7 +22,7 @@ KEYSTORE_FILE="${KEYSTORE_FILE:-${KEYSTORE_RUNTIME}/keystore.jks}"
 TRUSTSTORE_FILE="${TRUSTSTORE_FILE:-${KEYSTORE_RUNTIME}/cacerts}"
 TRUSTED_ALIAS="${TRUSTED_ALIAS:-trustedcert}"
 TRUSTED_CERTIFICATE="${TRUSTED_CERTIFICATE:-/certs/trusted.pem}"
-TRUSTED_CASERTS="${TRUSTED_CASERTS:-/trustedcerts}"
+TRUSTED_CA_CERTS="${TRUSTED_CA_CERTS:-/trustedcerts}"
 
 announce() {
   [ -n "$@" ] && echo "[v] --> $@"
@@ -36,12 +36,12 @@ create_truststore() {
   announce "Creating a JAVA truststore as ${TRUSTSTORE_FILE}"
   if [[ -d "${CA_CERT_DIR}" ]]
   then
-    find ${TRUSTED_CASERTS} \( -name '*.crt' -o  -name '*.pem' \) -type f -exec basename {} >> /tmp/certs_list \;
+    find ${TRUSTED_CA_CERTS} \( -name '*.crt' -o  -name '*.pem' \) -type f -exec basename {} >> /tmp/certs_list \;
     for CA in `cat /tmp/certs_list`
     do
       announce "Importing ${CA} into JAVA truststore"
-      keytool -import -alias ${CA%%.*} -file ${TRUSTED_CASERTS}/${CA} -keystore ${TRUSTSTORE_FILE} -noprompt -storepass changeit -trustcacerts
-      cat ${CA_CERT_DIR}/${CA} >> ${CA_CERT_FILE}
+      keytool -import -alias ${CA%%.*} -file ${TRUSTED_CA_CERTS}/${CA} -keystore ${TRUSTSTORE_FILE} -noprompt -storepass changeit -trustcacerts
+      cat ${TRUSTED_CA_CERTS}/${CA} >> ${CA_CERT_FILE}
     done
 
   fi
