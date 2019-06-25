@@ -13,15 +13,14 @@
 CERTIFICATE_FILE="${CERTIFICATE_FILE:-/certs/tls.crt}"
 PRIVATE_KEY_FILE="${PRIVATE_KEY_FILE:-/certs/tls.key}"
 CA_CERT_DIR="${CA_CERT_DIR:-/cacerts}"
-CA_CERT_FILE="${CA_CERT_FILE:-${CA_CERT_DIR}/ca-bundle.pem}"
+CA_CERT_FILE="${CA_CERT_FILE:-/certs/ca.crt}"
 IMPORT_SYSTEM_TRUSTSTORE="${IMPORT_SYSTEM_TRUSTSTORE:-true}"
-OPENSSL_CERTS="${OPENSSL_CERTS:-/etc/ssl/certs}"
-JAVA_CACERTS="${JAVA_CACERTS:-/etc/ssl/java/cacerts}"
+JAVA_CACERTS="${JAVA_CACERTS:-/usr/lib/jvm/java/lib/security/cacerts}"
 KEYSTORE_RUNTIME="${KEYSTORE_RUNTIME:-/etc/keystore}"
-KEYSTORE_FILE="${KEYSTORE_FILE:-${KEYSTORE_RUNTIME}/keystore.jks}"
+KEYSTORE_FILE="${KEYSTORE_FILE:-${KEYSTORE_RUNTIME}/keystore.p12}"
 TRUSTSTORE_FILE="${TRUSTSTORE_FILE:-${KEYSTORE_RUNTIME}/cacerts}"
 TRUSTED_ALIAS="${TRUSTED_ALIAS:-trustedcert}"
-TRUSTED_CERTIFICATE="${TRUSTED_CERTIFICATE:-/certs/trusted.pem}"
+TRUSTED_CERTIFICATE="${TRUSTED_CERTIFICATE:-/certs/ca.pem}"
 TRUSTED_CA_CERTS="${TRUSTED_CA_CERTS:-/trustedcerts}"
 
 announce() {
@@ -41,7 +40,6 @@ create_truststore() {
     do
       announce "Importing ${CA} into JAVA truststore"
       keytool -import -alias ${CA%%.*} -file ${TRUSTED_CA_CERTS}/${CA} -keystore ${TRUSTSTORE_FILE} -noprompt -storepass changeit -trustcacerts
-      cat ${TRUSTED_CA_CERTS}/${CA} >> ${CA_CERT_FILE}
     done
 
   fi
@@ -57,15 +55,9 @@ create_truststore() {
 create_keystore() {
   announce "Creating a temporary pkcs12 keystore."
   openssl pkcs12 -export -name cert -in ${CERTIFICATE_FILE} -inkey ${PRIVATE_KEY_FILE} -nodes \
-    -CAfile ${CA_CERT_FILE} -out ${KEYSTORE_RUNTIME}/keystore.p12 \
-    -passout pass: || failed "unable to convert certificates pkcs12 format"
+    -CAfile ${CA_CERT_FILE} -out ${KEYSTORE_FILE} \
+    -passout pass:'changeit' || failed "unable to convert certificates pkcs12 format"
 
-  announce "Creating a JAVA keystore as ${KEYSTORE_FILE}."
-  keytool -importkeystore -destkeystore ${KEYSTORE_FILE} \
-    -srckeystore ${KEYSTORE_RUNTIME}/keystore.p12 -srcstoretype pkcs12 \
-    -alias cert -srcstorepass '' -noprompt -storepass changeit || failed "unable to import the pkcs12 into keystore"
-
-  keytool -keypasswd -new changeit -keystore ${KEYSTORE_FILE} -storepass changeit -alias cert -keypass ''
 }
 
 add_trusted_certificate() {
