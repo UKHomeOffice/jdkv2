@@ -5,13 +5,24 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     steps:
-    - uses: actions/checkout@master
-    - name: Publish to Registry
-      uses: elgohr/Publish-Docker-Github-Action@master
-      with:
-        name: digitalpatterns/jdk/master
-        username: ${{ github.actor }}
-        password: ${{ github.token }}
-        registry: docker.pkg.github.com
-        snapshot: true
-        tags: "latest, ${{ github.sha }}"
+      - uses: actions/checkout@v1
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag localbuild/testimage:latest
+      - uses: anchore/scan-action@master
+        with:
+          image-reference: "localbuild/testimage:latest"
+          dockerfile-path: "./Dockerfile"
+          fail-build: false
+          include-app-packages: true
+      - name: anchore inline scan JSON results
+        run: for j in `ls ./anchore-reports/*.json`; do echo "---- ${j} ----"; cat ${j}; echo; done
+      - uses: actions/checkout@master
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: digitalpatterns/jdk/master
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+          registry: docker.pkg.github.com
+          snapshot: true
+          tags: "latest, ${{ github.sha }}"
