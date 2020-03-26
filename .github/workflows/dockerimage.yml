@@ -39,8 +39,8 @@ jobs:
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
           name: ${{ env.IMAGE_DOCKER_HUB }}
-          username: ${{ DOCKER_USERNAME }}
-          password: ${{ DOCKER_PASSWORD }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
           cache: true
           tags: "latest"
       - uses: 8398a7/action-slack@v2
