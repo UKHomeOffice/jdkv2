@@ -42,7 +42,7 @@ jobs:
           username: ${{ DOCKER_USERNAME }}
           password: ${{ DOCKER_PASSWORD }}
           cache: true
-          tags: "latest":  
+          tags: "latest"
       - uses: 8398a7/action-slack@v2
         with:
           status: ${{ job.status }}
