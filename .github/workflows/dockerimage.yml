@@ -9,7 +9,9 @@ jobs:
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
-        name: digitalpatterns/jdk
+        name: digitalpatterns/jdk/master
         username: ${{ github.actor }}
         password: ${{ github.token }}
         registry: docker.pkg.github.com
+        snapshot: true
+        tags: "latest, ${{ github.sha }}"
